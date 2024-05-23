@@ -1,5 +1,6 @@
 import random
 import string
+import unittest
 
 class UserFactory:
     @staticmethod
@@ -28,8 +29,28 @@ class User:
         return f"User(code={self.code}, login={self.login}, name={self.name}, email={self.email})"
 
 
-if __name__ == "__main__":
-    users = UserFactory.create_users(5)
-    for user in users:
-        print(user)
+class Test(unittest.TestCase):
+
+    def test_create_user(self):
+        user = UserFactory.create_user()
+        self.assertIsInstance(user, User)
+        self.assertEqual(len(user.code), 6)
+        self.assertTrue(user.code.isalnum())
+        self.assertEqual(len(user.login), 8)
+        self.assertTrue(user.login.islower())
+        self.assertEqual(len(user.password), 10)
+        self.assertTrue(all(c.isalnum() for c in user.password))
+        self.assertEqual(len(user.name), 10)
+        self.assertTrue(user.name.isalpha())
+        self.assertEqual(user.email, f"{user.login}@example.com")
+
+    def test_create_users(self):
+        users = UserFactory.create_users(5)
+        self.assertEqual(len(users), 5)
+        for user in users:
+            self.assertIsInstance(user, User)
+            self.test_create_user()
+
+if __name__ == '__main__':
+    unittest.main()
 
